@@ -14,7 +14,7 @@
 
 	<properties>
 		<java.version>25</java.version>
-		<spring-cloud.version>2026.0.0-SNAPSHOT</spring-cloud.version>
+		<spring-cloud.version>2025.1.4</spring-cloud.version>
 	</properties>
 	<dependencies>
 		<dependency>
@@ -41,11 +41,43 @@
 		<dependency>
 			<groupId>org.springframework.cloud</groupId>
 			<artifactId>spring-cloud-starter-stream-kafka</artifactId>
+			<exclusions>
+				<!-- Exclusión del componente vulnerable transitivo -->
+				<exclusion>
+					<groupId>com.vaadin.external.google</groupId>
+					<artifactId>android-json</artifactId>
+				</exclusion>
+				<exclusion>
+					<groupId>at.yawk.lz4</groupId>
+					<artifactId>lz4-java</artifactId>
+				</exclusion>
+			</exclusions>
 		</dependency>
 		<dependency>
 			<groupId>org.springframework.boot</groupId>
 			<artifactId>spring-boot-starter-test</artifactId>
 			<scope>test</scope>
+			<exclusions>
+				<exclusion>
+					<groupId>com.vaadin.external.google</groupId>
+					<artifactId>android-json</artifactId>
+				</exclusion>
+			</exclusions>
+		</dependency>
+		<dependency>
+			<groupId>at.yawk.lz4</groupId>
+			<artifactId>lz4-java</artifactId>
+			<version>1.11.4</version>
+		</dependency>
+		<dependency>
+			<groupId>org.xerial.snappy</groupId>
+			<artifactId>snappy-java</artifactId>
+			<version>1.1.10.9</version>
+		</dependency>
+		<dependency>
+			<groupId>org.json</groupId>
+			<artifactId>json</artifactId>
+			<version>20231013</version>
 		</dependency>
 	</dependencies>
 	<dependencyManagement>
@@ -56,6 +88,11 @@
 				<version>${spring-cloud.version}</version>
 				<type>pom</type>
 				<scope>import</scope>
+			</dependency>
+			<dependency>
+				<groupId>at.yawk.lz4</groupId>
+				<artifactId>lz4-java</artifactId>
+				<version>1.11.3</version> <!-- O la versión más reciente corregida por el mantenedor -->
 			</dependency>
 		</dependencies>
 	</dependencyManagement>
