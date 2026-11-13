@@ -29,11 +29,7 @@ public class ProductCommandConsumer {
                     }
                     ProductDto productDto = cmd.body();
                     ProductDto productDtoSaved = productService.create(productDto);
-                    log.info("Creating product id={}, name={}, price={}, isActive={}",
-                        productDtoSaved.id(),
-                        productDtoSaved.name(),
-                        productDtoSaved.price(),
-                        productDtoSaved.isActive());
+                    log.info("Created product Product={}", productDtoSaved);
                 }
                 case "UPDATE" -> {
                     if (cmd.body() == null) {
@@ -41,12 +37,7 @@ public class ProductCommandConsumer {
                     }
                     ProductDto productDto = cmd.body();
                     ProductDto productDtoSaved = productService.update(productDto);
-                    log.info("Updating product id={}, name={}, price={}, isActive={}",
-                        productDtoSaved.id(),
-                        productDtoSaved.name(),
-                        productDtoSaved.price(),
-                        productDtoSaved.isActive());
-                    log.info("Updating product Product={}", productDtoSaved);
+                    log.info("Updated product Product={}", productDtoSaved);
                 }
                 case "DELETE" -> {
                     if (cmd.body() == null) {
@@ -54,15 +45,11 @@ public class ProductCommandConsumer {
                     }
                     ProductDto productDto = cmd.body();
                     ProductDto productDtoSaved = productService.update(productDto);
-                    log.info("Deleting product id={}, name={}, price={}, isActive={}",
-                        productDtoSaved.id(),
-                        productDtoSaved.name(),
-                        productDtoSaved.price(),
-                        productDtoSaved.isActive());
+                    log.info("Deleted product Product={}", productDtoSaved);
                 }
                 case "GET_ALL" -> {
                     List<ProductDto> productDtoList = productService.getAll();
-                    log.info("Getting products products={}", productDtoList);
+                    log.info("Get products products={}", productDtoList);
                 }
                 case "FIND_BY_ID" -> {
                     if (cmd.body() == null) {
