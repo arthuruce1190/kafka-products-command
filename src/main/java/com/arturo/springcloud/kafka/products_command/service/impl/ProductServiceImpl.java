@@ -1,8 +1,8 @@
 package com.arturo.springcloud.kafka.products_command.service.impl;
 
 import com.arturo.springcloud.kafka.products_command.entity.Product;
-import com.arturo.springcloud.kafka.products_command.mapper.ProductMapper;
 import com.arturo.springcloud.kafka.products_command.model.dto.ProductDto;
+import com.arturo.springcloud.kafka.products_command.model.mapper.ProductMapper;
 import com.arturo.springcloud.kafka.products_command.repository.ProductRepository;
 import com.arturo.springcloud.kafka.products_command.service.ProductService;
 import jakarta.transaction.Transactional;
@@ -20,16 +20,14 @@ public class ProductServiceImpl implements ProductService {
     @Override
     @Transactional
     public ProductDto create(final ProductDto product) {
-        final Product productEntity = productMapper.toEntity(product);
-        final Product productSaved = productRepository.insert(productEntity);
+        final Product productSaved = productRepository.insert(productMapper.toEntity(product));
         return productMapper.toDto(productSaved);
     }
 
     @Override
     @Transactional
     public ProductDto update(final ProductDto product) {
-        Product productEntity = productMapper.toEntity(product);
-        Product productUpdated = productRepository.save(productEntity);
+        Product productUpdated = productRepository.save(productMapper.toEntity(product));
         return productMapper.toDto(productUpdated);
     }
 

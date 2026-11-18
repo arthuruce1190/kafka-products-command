@@ -1,4 +1,4 @@
-package com.arturo.springcloud.kafka.products_command.mapper;
+package com.arturo.springcloud.kafka.products_command.model.mapper;
 
 import com.arturo.springcloud.kafka.products_command.entity.Product;
 import com.arturo.springcloud.kafka.products_command.model.dto.ProductDto;
