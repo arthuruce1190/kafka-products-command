@@ -27,13 +27,20 @@ public class ProductServiceImpl implements ProductService {
     @Override
     @Transactional
     public ProductDto update(final ProductDto product) {
+        Product productUpdated = productRepository.save(productMapper.toUpdateEntity(product));
+        return productMapper.toDto(productUpdated);
+    }
+
+    @Override
+    @Transactional
+    public ProductDto delete(ProductDto product) {
         Product productUpdated = productRepository.save(productMapper.toEntity(product));
         return productMapper.toDto(productUpdated);
     }
 
     @Override
-    public List<ProductDto> getAll() {
-        return productMapper.toDtoList(productRepository.findAll());
+    public List<ProductDto> getAll(final Boolean isActive) {
+        return productMapper.toDtoList(productRepository.findAll(isActive));
     }
 
     @Override

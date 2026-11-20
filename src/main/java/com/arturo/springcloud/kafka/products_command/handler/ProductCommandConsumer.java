@@ -31,7 +31,7 @@ public class ProductCommandConsumer {
             final Command<ProductDto> cmd = msg.getPayload();
             String type = cmd.type() == null ? "" : cmd.type().toUpperCase();
             Reply<ProductDto> reply = null;
-            Reply<List<?>> replyList;
+            Reply<List<ProductDto>> replyList = null;
             switch (type) {
                 case "CREATE" -> {
                     if (cmd.body() == null) {
@@ -62,19 +62,12 @@ public class ProductCommandConsumer {
                     reply = new Reply<>(OK.value(), OK.getReasonPhrase(), "Deleted product", productDeleted);
                 }
                 case "GET_ALL" -> {
-                    if (cmd.body() == null) {
-                        reply = new Reply<>(
-                            NOT_FOUND.value(), NOT_FOUND.getReasonPhrase(), "Empty body", null);
-                    }
-                    List<ProductDto> productList = productService.getAll();
+                    List<ProductDto> productList = productService.getAll(cmd.isActive());
                     log.info("Get products products={}", productList);
                     replyList = new Reply<>(OK.value(), OK.getReasonPhrase(), "Update product", productList);
                 }
                 case "FIND_BY_ID" -> {
-                    if (cmd.body() == null) {
-                        reply = new Reply<>(NOT_FOUND.value(), OK.getReasonPhrase(), "Empty body", null);
-                    }
-                    ProductDto productSearched = productService.findById(cmd.body().id());
+                    ProductDto productSearched = productService.findById(cmd.id());
                     log.info("Searching by id product={}", productSearched);
                     reply = new Reply<>(OK.value(), OK.getReasonPhrase(), "Update product", productSearched);
                 }
@@ -87,7 +80,8 @@ public class ProductCommandConsumer {
             String correlationId = msg.getHeaders().get("correlationId", String.class);
             log.info("Recibiendo correlationId={}", correlationId);
 
-            MessageBuilder<Reply<?>> out = MessageBuilder.withPayload(reply);
+            MessageBuilder<Reply<?>> out = (reply != null)
+                ? MessageBuilder.withPayload(reply) : MessageBuilder.withPayload(replyList);
             if (correlationId != null) {
                 out.setHeader("correlationId", correlationId);
             }

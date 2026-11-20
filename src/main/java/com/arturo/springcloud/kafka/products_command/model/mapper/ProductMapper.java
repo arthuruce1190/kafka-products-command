@@ -22,6 +22,10 @@ public interface ProductMapper {
     @Mapping(target = "isActive", constant = "true")
     Product toEntity(ProductDto dto);
 
+    @Mapping(target = "createdAt", ignore = true)
+    @Mapping(target = "updatedAt", ignore = true)
+    Product toUpdateEntity(ProductDto dto);
+
     // 3. Actualizar una Entity existente (conserva sus fechas originales)
     @Mapping(target = "id", ignore = true)
     @Mapping(target = "createdAt", ignore = true)

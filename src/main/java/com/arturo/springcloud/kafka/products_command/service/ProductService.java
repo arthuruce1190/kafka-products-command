@@ -9,7 +9,9 @@ public interface ProductService {
 
     ProductDto update(ProductDto product);
 
-    List<ProductDto> getAll();
+    ProductDto delete(ProductDto product);
+
+    List<ProductDto> getAll(Boolean isActive);
 
     ProductDto findById(String id);
 }
