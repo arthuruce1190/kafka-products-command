@@ -29,51 +29,52 @@ public class ProductCommandConsumer {
     public Function<Message<Command<ProductDto>>, Message<Reply<?>>> handleCommands() {
         return msg -> {
             final Command<ProductDto> cmd = msg.getPayload();
-            String type = cmd.type() == null ? "" : cmd.type().toUpperCase();
             Reply<ProductDto> reply = null;
             Reply<List<ProductDto>> replyList = null;
-            switch (type) {
-                case "CREATE" -> {
+            switch (cmd.type()) {
+                case CREATE -> {
                     if (cmd.body() == null) {
                         log.warn("Create empty body");
                         reply = new Reply<>(
-                            NOT_FOUND.value(), NOT_FOUND.getReasonPhrase(), "Empty body", null);
+                            NOT_FOUND, NOT_FOUND.getReasonPhrase(), "Empty body", null);
+                    } else {
+                        ProductDto productSaved = productService.create(cmd.body());
+                        log.info("Created product Product={}", productSaved);
+                        reply = new Reply<>(OK, OK.getReasonPhrase(), "Created product", productSaved);
                     }
-                    ProductDto productSaved = productService.create(cmd.body());
-                    log.info("Created product Product={}", productSaved);
-                    reply = new Reply<>(OK.value(), OK.getReasonPhrase(), "Created product", productSaved);
                 }
-                case "UPDATE" -> {
+                case UPDATE -> {
                     if (cmd.body() == null) {
                         reply = new Reply<>(
-                            NOT_FOUND.value(), NOT_FOUND.getReasonPhrase(), "Empty body", null);
+                            NOT_FOUND, NOT_FOUND.getReasonPhrase(), "Empty body", null);
+                    } else {
+                        ProductDto productSaved = productService.update(cmd.body());
+                        log.info("Updated product Product={}", productSaved);
+                        reply = new Reply<>(OK, OK.getReasonPhrase(), "Updates product", productSaved);
                     }
-                    ProductDto productSaved = productService.update(cmd.body());
-                    log.info("Updated product Product={}", productSaved);
-                    reply = new Reply<>(OK.value(), OK.getReasonPhrase(), "Updates product", productSaved);
                 }
-                case "DELETE" -> {
+                case DELETE -> {
                     if (cmd.body() == null) {
                         reply = new Reply<>(
-                            NOT_FOUND.value(), NOT_FOUND.getReasonPhrase(), "Empty body", null);
+                            NOT_FOUND, NOT_FOUND.getReasonPhrase(), "Empty body", null);
+                    } else {
+                        ProductDto productDeleted = productService.update(cmd.body());
+                        log.info("Deleted product Product={}", productDeleted);
+                        reply = new Reply<>(OK, OK.getReasonPhrase(), "Deleted product", productDeleted);
                     }
-                    ProductDto productDeleted = productService.update(cmd.body());
-                    log.info("Deleted product Product={}", productDeleted);
-                    reply = new Reply<>(OK.value(), OK.getReasonPhrase(), "Deleted product", productDeleted);
                 }
-                case "GET_ALL" -> {
+                case GET_ALL -> {
                     List<ProductDto> productList = productService.getAll(cmd.isActive());
                     log.info("Get products products={}", productList);
-                    replyList = new Reply<>(OK.value(), OK.getReasonPhrase(), "Update product", productList);
+                    replyList = new Reply<>(OK, OK.getReasonPhrase(), "Update product", productList);
                 }
-                case "FIND_BY_ID" -> {
+                case FIND_BY_ID -> {
                     ProductDto productSearched = productService.findById(cmd.id());
-                    log.info("Searching by id product={}", productSearched);
-                    reply = new Reply<>(OK.value(), OK.getReasonPhrase(), "Update product", productSearched);
+                    reply = new Reply<>(OK, OK.getReasonPhrase(), "Update product", productSearched);
                 }
                 default -> {
                     log.info("Undefined operation...");
-                    reply = new Reply<>(FORBIDDEN.value(), OK.getReasonPhrase(), "Undefined operation", null);
+                    reply = new Reply<>(FORBIDDEN, OK.getReasonPhrase(), "Undefined operation", null);
                 }
             }
 

@@ -1,4 +1,6 @@
 package com.arturo.springcloud.kafka.products_command.model;
 
-public record Reply<T>(Integer status, String statusMessage, String message, T body) {
+import org.springframework.http.HttpStatus;
+
+public record Reply<T>(HttpStatus status, String statusMessage, String message, T body) {
 }
