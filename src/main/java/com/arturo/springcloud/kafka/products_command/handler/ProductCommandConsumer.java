@@ -29,60 +29,57 @@ public class ProductCommandConsumer {
     public Function<Message<Command<ProductDto>>, Message<Reply<?>>> handleCommands() {
         return msg -> {
             final Command<ProductDto> cmd = msg.getPayload();
-            Reply<ProductDto> reply = null;
-            Reply<List<ProductDto>> replyList = null;
-            switch (cmd.type()) {
+            Reply<?> reply = switch (cmd.type()) {
                 case CREATE -> {
                     if (cmd.body() == null) {
                         log.warn("Create empty body");
-                        reply = new Reply<>(
+                        yield new Reply<>(
                             NOT_FOUND, NOT_FOUND.getReasonPhrase(), "Empty body", null);
                     } else {
                         ProductDto productSaved = productService.create(cmd.body());
                         log.info("Created product Product={}", productSaved);
-                        reply = new Reply<>(OK, OK.getReasonPhrase(), "Created product", productSaved);
+                        yield new Reply<>(OK, OK.getReasonPhrase(), "Created product", productSaved);
                     }
                 }
                 case UPDATE -> {
                     if (cmd.body() == null) {
-                        reply = new Reply<>(
+                        yield new Reply<>(
                             NOT_FOUND, NOT_FOUND.getReasonPhrase(), "Empty body", null);
                     } else {
                         ProductDto productSaved = productService.update(cmd.body());
                         log.info("Updated product Product={}", productSaved);
-                        reply = new Reply<>(OK, OK.getReasonPhrase(), "Updates product", productSaved);
+                        yield new Reply<>(OK, OK.getReasonPhrase(), "Updates product", productSaved);
                     }
                 }
                 case DELETE -> {
                     if (cmd.body() == null) {
-                        reply = new Reply<>(
+                        yield new Reply<>(
                             NOT_FOUND, NOT_FOUND.getReasonPhrase(), "Empty body", null);
                     } else {
                         ProductDto productDeleted = productService.update(cmd.body());
                         log.info("Deleted product Product={}", productDeleted);
-                        reply = new Reply<>(OK, OK.getReasonPhrase(), "Deleted product", productDeleted);
+                        yield new Reply<>(OK, OK.getReasonPhrase(), "Deleted product", productDeleted);
                     }
                 }
                 case GET_ALL -> {
                     List<ProductDto> productList = productService.getAll(cmd.isActive());
                     log.info("Get products products={}", productList);
-                    replyList = new Reply<>(OK, OK.getReasonPhrase(), "Update product", productList);
+                    yield new Reply<>(OK, OK.getReasonPhrase(), "Update product", productList);
                 }
                 case FIND_BY_ID -> {
                     ProductDto productSearched = productService.findById(cmd.id());
-                    reply = new Reply<>(OK, OK.getReasonPhrase(), "Update product", productSearched);
+                    yield new Reply<>(OK, OK.getReasonPhrase(), "Update product", productSearched);
                 }
                 default -> {
                     log.info("Undefined operation...");
-                    reply = new Reply<>(FORBIDDEN, OK.getReasonPhrase(), "Undefined operation", null);
+                    yield new Reply<>(FORBIDDEN, OK.getReasonPhrase(), "Undefined operation", null);
                 }
-            }
+            };
 
             String correlationId = msg.getHeaders().get("correlationId", String.class);
             log.info("Recibiendo correlationId={}", correlationId);
 
-            MessageBuilder<Reply<?>> out = (reply != null)
-                ? MessageBuilder.withPayload(reply) : MessageBuilder.withPayload(replyList);
+            MessageBuilder<Reply<?>> out = MessageBuilder.withPayload(reply);
             if (correlationId != null) {
                 out.setHeader("correlationId", correlationId);
             }
